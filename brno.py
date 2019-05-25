@@ -9,7 +9,7 @@ mydb = mysql.connector.connect(
 
 mycursor = mydb.cursor()
 
-def insert_data(category, product):
+def insert_data(category, product, price):
     sql = """START TRANSACTION;
 DELETE FROM ingredient_influence;
 DELETE FROM data_product_ingredient;
@@ -45,21 +45,21 @@ COMMIT;"""
     mycursor.execute(sql)
     mydb.commit()
 
-    for cat in category["CategoriesCollection"]:
+    for cat in category:
         sql = "INSERT INTO `data_category` (`uuid`, `name`) VALUES (%s, %s)"
-        val = (cat["Id"], cat["Name"])
+        val = (cat[0], cat[1])
         mycursor.execute(sql, val)
         mydb.commit()
 
 
     sql = "INSERT INTO `ingredient` (`name`) VALUES (%s)"
-    val = "" #TODO
+    val = ""
     mycursor.execute(sql, val)
     mydb.commit()
 
-    for prod in product["ConceptsCollection"]:
+    for prod in product:
         sql = "INSERT INTO `data_product` (`uuid`, `ean`, `category_id`, `name`, `description`, `url_image`, `url_shop`, `price`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        val = (prod["ConceptCode"], , prod["CategoryIds"], prod["ProductName"], prod["ProductDescription"], prod["ImageUrl"])  # todo
+        val = (prod[0], prod[1], prod[2], prod[3], prod[4], prod[5], prod[6], prod[7])
         mycursor.execute(sql, val)
         mydb.commit()
 
