@@ -9,7 +9,7 @@ mydb = mysql.connector.connect(
 
 mycursor = mydb.cursor()
 
-def insert_data(data):
+def insert_data(category, product):
     sql = """START TRANSACTION;
 DELETE FROM ingredient_influence;
 DELETE FROM data_product_ingredient;
@@ -43,28 +43,28 @@ INSERT INTO `ingredient_influence` (`ingredient_name`, `influence_id`, `score`) 
 
 COMMIT;"""
     mycursor.execute(sql)
+    mydb.commit()
+
+    for cat in category["CategoriesCollection"]:
+        sql = "INSERT INTO `data_category` (`uuid`, `name`) VALUES (%s, %s)"
+        val = (cat["Id"], cat["Name"])
+        mycursor.execute(sql, val)
+        mydb.commit()
+
 
     sql = "INSERT INTO `ingredient` (`name`) VALUES (%s)"
     val = "" #TODO
     mycursor.execute(sql, val)
+    mydb.commit()
 
-    sql = "INSERT INTO `data_category` (`uuid`, `name`) VALUES (%s, %s)"
-    val = "" #TODO
-    mycursor.execute(sql, val)
+    for prod in product["ConceptsCollection"]:
+        sql = "INSERT INTO `data_product` (`uuid`, `ean`, `category_id`, `name`, `description`, `url_image`, `url_shop`, `price`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+        val = (prod["ConceptCode"], , prod["CategoryIds"], prod["ProductName"], prod["ProductDescription"], prod["ImageUrl"])  # todo
+        mycursor.execute(sql, val)
+        mydb.commit()
 
-    sql = "INSERT INTO `data_product` (`uuid`, `ean`, `category_id`, `name`, `description`, `url_image`, `url_shop`, `price`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-    val = "" #todo
-    mycursor.execute(sql, val)
-
-    sql = "INSERT INTO `data_product_ingredient` (`product_id`, `ingredient_name`, `order`, `amount`) VALUES (%s, %s, %s, %s)"
-    val = ""
-    mycursor.execute(sql, val)
-
-sql = "INSERT INTO data_category (name, uuid) VALUES (%s, %s)"
-val = ("Konečně", "to kurva funguje")
-
-print(sql,val)
-mycursor.execute(sql,val)
-
-mydb.commit()
+        sql = "INSERT INTO `data_product_ingredient` (`product_id`, `ingredient_name`, `order`, `amount`) VALUES (%s, %s, %s, %s)"
+        val = ""
+        mycursor.execute(sql, val)
+        mydb.commit()
 
