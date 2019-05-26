@@ -5,22 +5,33 @@ def strip_list(l):
     return([x.strip() for x in l])
 
 def parse_ingedience(ingredience):
+    if(ingredience == None):
+        return False
     lst = ingredience.split(",")
     list(map(str.strip, lst))
     lst = strip_list(lst)
     return lst 
 
+data_send = [0]
+
+data_send.append(5)
+
+
 with open('conceptdata.json', encoding='utf-8') as json_file:
     data = json.load(json_file)
-    ingredienc = data['ConceptsCollection'][0]['Ingredients']
-    ingredienc = parse_ingedience(ingredienc)
-    original_name = data['ConceptsCollection'][0]['ProductName']
-    product_description = data['ConceptsCollection'][0]['ProductDescription']
-    categori_id = data['ConceptsCollection'][0]['CategoryIds'][0]
-    imageurl = data['ConceptsCollection'][0]['ImageUrl']
-    concept_code = data ['ConceptsCollection'][0]['ConceptCode']
-    shop_url = "https://in.oriflame.com/products/product?code="+concept_code
-   # print(ingredienc ,original_name ,product_description,categori_id,imageurl,shop_url )
+    for x in range(300):
+        print(x)
+        ingredienc = data['ConceptsCollection'][x]['Ingredients']
+        ingredienc = parse_ingedience(ingredienc)
+        original_name = data['ConceptsCollection'][x]['ProductName']
+        product_description = data['ConceptsCollection'][x]['ProductDescription']
+       #categori_id = data['ConceptsCollection'][x]['CategoryIds'][0]
+        imageurl = data['ConceptsCollection'][x]['ImageUrl']
+        concept_code = data ['ConceptsCollection'][x]['ConceptCode']
+        shop_url = "https://in.oriflame.com/products/product?code="+concept_code
+        
+        
+        print(ingredienc ,original_name ,product_description,imageurl,shop_url )
     json_file.close()
 
 with open('prices.json', encoding='utf-8') as price_json_file:
