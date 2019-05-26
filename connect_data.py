@@ -1,4 +1,5 @@
-import json 
+import json
+import brno
 from collections import namedtuple
 
 def strip_list(l):
@@ -12,32 +13,48 @@ def parse_ingedience(ingredience):
     lst = strip_list(lst)
     return lst 
 
+
+
 data_send = [0]
 
 data_send.append(5)
 
 
+
 with open('conceptdata.json', encoding='utf-8') as json_file:
     data = json.load(json_file)
-    for x in range(300):
-        print(x)
-        ingredienc = data['ConceptsCollection'][x]['Ingredients']
-        ingredienc = parse_ingedience(ingredienc)
-        original_name = data['ConceptsCollection'][x]['ProductName']
-        product_description = data['ConceptsCollection'][x]['ProductDescription']
-       #categori_id = data['ConceptsCollection'][x]['CategoryIds'][0]
-        imageurl = data['ConceptsCollection'][x]['ImageUrl']
-        concept_code = data ['ConceptsCollection'][x]['ConceptCode']
+    x=0
+    w, h = 8, 1000;
+    product = [[0 for x in range(w)] for y in range(h)]
+    for row in data['ConceptsCollection']:
+        ingredienc = row['Ingredients']
+        ingredience = parse_ingedience(ingredienc)
+        original_name = row['ProductName']
+        product_description = row['ProductDescription']
+        try:
+            categori_id = row['CategoryIds'][2]
+        except:
+            categori_id = ""
+
+        imageurl = row['ImageUrl']
+        concept_code = row['ConceptCode']
         shop_url = "https://in.oriflame.com/products/product?code="+concept_code
-        
-        
-        print(ingredienc ,original_name ,product_description,imageurl,shop_url )
+
+        if 'categori_id' in locals():
+            product[x] = [concept_code, "NULL", categori_id, original_name, product_description, imageurl, shop_url, ingredience]
+            #print(x)
+            x += 1
+            #print(concept_code, "",  categori_id, original_name, product_description, imageurl, shop_url, ingredienc,)
     json_file.close()
 
 with open('prices.json', encoding='utf-8') as price_json_file:
     data = json.load(price_json_file)
-    currnency = data['ConceptPricesCollection'][0]['Currency']
-    price = data ['ConceptPricesCollection'][0]['Price']['CurrentPrice']
-    concept_code = data['ConceptPricesCollection'][0]['ConceptCode']
-    print(concept_code)
+    for row in data['ConceptPricesCollection']:
+        price = row['Price']['CurrentPrice']
+        concept_code = row['ConceptCode']
+        price = dict()
+        price[concept_code] = price
+
+brno.insert_data(product, price)
+
 
